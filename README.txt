@@ -1,5 +1,5 @@
-Team Members - Aakash Pamnani ()
 Add the name and directory id (in parentheses) of each member of your team. If you are working by yourself, add your name and directory id too.
+Team Members - Aakash Pamnani (aakashp), Brayden Huang ()
 
 App Description - One or two line description.
 
