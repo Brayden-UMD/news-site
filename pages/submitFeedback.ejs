@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8" />
+	<title>Feedback</title>
+</head>
+
+<body>
+	<h1>Submit Feedback</h1>
+	<form action="/processFeedback" method="post"> 
+		<fieldset>            
+			<label><strong>Name: </strong><input type="text" name="name" id="name"></label>
+			<label><strong>Email Address: </strong><input type="email" name="email" id="email"></label><br><br>
+			<label><strong>Review: </strong><br>
+				<textarea name = "review" id = "review-info" rows="10" cols="75"></textarea>
+			</label>
+		</fieldset>
+		<br>
+		<input type="reset" value="Reset">
+		<input type="submit" value="Submit Feedback">
+		<hr>
+		<a href="/">HOME</a>
+	</form>
+</body>
+
+</html>
