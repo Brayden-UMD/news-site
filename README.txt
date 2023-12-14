@@ -6,10 +6,11 @@ Team Members
     + Brayden Huang (brayden)
 
 App Description - One or two line description.
-    + A basic news website with intriguing articles and Google Ads Integration!
+    + A basic news website with intriguing articles and online ads integration!
 
 API links - Links to API(s) you are using.
-    + TODO: Add google ads
+    + Monetag API - https://www.monetag.com
+    + PropellerAds - https://eu.dspmega.com/api/documentation#/bid/bidRequest
 
 YouTube Demo Video - Link to a YouTube video that provides a demo of your application. This video is very important. We will not grade a project unless a video is provided.
     + TODO: Add video
@@ -33,3 +34,7 @@ Before 12/12:
     + Made articles be displayed on homepage
     + Personalized homepage
     + Added 404 (not found) mechanics
+
+12/14 (Brayden)
+    + Added API requirement (a bunch of adware)
+    + Tip: Use UBlock Origin when debugging to avoid constant ads
