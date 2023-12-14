@@ -1,5 +1,6 @@
 //Use code in other files
 const MAIN = require('./main.js');
+const UTILS = require('./utilities.js');
 
 //Imports
 const express = require('express');
@@ -14,7 +15,8 @@ const uri = `mongodb+srv://${process.env.MONGO_DB_USERNAME}:${process.env.MONGO_
 const { MongoClient, ServerApiVersion } = require('mongodb');
 
  /* Our database and collection */
-const databaseAndCollection = {db: process.env.MONGO_DB_NAME, collection: process.env.MONGO_COLLECTION};
+const feedbackDatabaseAndCollection = {db: process.env.MONGO_DB_NAME, collection: process.env.MONGO_FEEDBACK_COLLECTION};
+const client = new MongoClient(uri, { serverApi: ServerApiVersion.v1 });
 
 /*===========================================
             GET Route Handlers
@@ -33,62 +35,48 @@ function initializeGETHandlers() {
     MAIN.APP.use("/assets", express.static(path.join(__dirname, '/pages/assets')));
 
     //Serve "/index.html" 
-    MAIN.APP.get('/', (request, response) => {
-        response.render('index.ejs');
+    MAIN.APP.get('/', async (request, response) => {
+        response.render('index.ejs', {
+            articles: await UTILS.getArticles()
+        });
     });
 
-    MAIN.APP.get('/article', (request, response) => {
-        response.render('article.ejs');
-        /*
-            <%- image %>
-            <%- table %>
-            <%- subtitle %>
-            <%- date %>
-            <%- text %>
-        */
-    });
+    //Serve articles
+    MAIN.APP.get('/article/:id', async (request, response) => {
+        const ID = request.params.id;
 
-    //Serve Feedback Form
-    MAIN.APP.get('/review', (request, response) => {
-        response.render('submitFeedback');
-    });
+        //Get the article from the database
+        const article = await UTILS.getArticleByID(ID);
 
-    //Feedback confirmation
-    MAIN.APP.post("/processFeedback", async (request, response) => {
-        const client = new MongoClient(uri, { serverApi: ServerApiVersion.v1 });
-    
-        try {
-            await client.connect();
-            let date = new Date();
-    
-            /* Inserting application */
-            const feedback = {
-                name: request.body.name, 
-                email: request.body.email, 
-                review: request.body.review, 
-                timeCompleted: date.toDateString()
-            };
-            await client.db(databaseAndCollection.db).collection(databaseAndCollection.collection).insertOne(feedback);
-            
-            response.render("processFeedback", feedback);
-        } catch (e) {
-            console.error(e);
-        } finally {
-            await client.close();
+        if (article === null) { //If article is not found
+            response.status(404);
+            response.render("404NotFound.ejs");
+        } else { //If article is found, render it
+            response.render('article.ejs', {
+                title: article.title,
+                subtitle: article.subtitle,
+                image: article.backgroundImage,
+                author: article.authorName,
+                text: article.articleText
+            });
         }
     });
 
+    //Serve Feedback Form
+    MAIN.APP.get('/submitFeedback', (request, response) => {
+        response.render('submitFeedback');
+    });
+
     // Display Review List
-    MAIN.APP.get("/reviewList", async (request, response) => {
-        const client = new MongoClient(uri, { serverApi: ServerApiVersion.v1 });
+    MAIN.APP.get("/displayReview", async (request, response) => {
         let reviewTable = '';
     
         try {
             await client.connect();
     
             let filter = {};
-            const cursor = client.db(databaseAndCollection.db)
-            .collection(databaseAndCollection.collection)
+            const cursor = client.db(feedbackDatabaseAndCollection.db)
+            .collection(feedbackDatabaseAndCollection.collection)
             .find(filter);
     
             const result = await cursor.toArray();
@@ -116,6 +104,19 @@ function initializeGETHandlers() {
         }
     });
 
+    // Since this is the last route we assume 404, as nothing else responded.
+    MAIN.APP.use( function(request, response) {
+        response.status(404);
+
+        // respond with html page
+        if (request.accepts('html')) {
+            response.render('404NotFound.ejs', { url: request.url });
+            return;
+        }
+
+        // default to plain-text. send()
+        response.type('txt').send('Not found');
+    });
 }
 
 module.exports = { initializeGETHandlers };

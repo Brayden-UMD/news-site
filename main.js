@@ -1,5 +1,6 @@
 //Use code in other files
 const GET_REQUESTS = require('./get_requests.js');
+const POST_REQUESTS = require('./post_requests.js');
 
 //Imports
 const express = require('express');
@@ -19,6 +20,10 @@ async function main() {
     //Initialize GET route handlers
     console.log("Initializing GET route handlers...");
     GET_REQUESTS.initializeGETHandlers();
+
+    //Initialize POST route handlers
+    console.log("Initializing POST route handlers...");
+    POST_REQUESTS.initializePOSTHandlers();
 
     SERVER = await exports.APP.listen(PORT, () => { //Await server startup
         console.log(`Web server started and running at: http://localhost:${PORT}`);
