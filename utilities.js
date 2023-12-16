@@ -1,28 +1,16 @@
-const path = require('path');
+//Use code in other files
+const MAIN = require('./main.js');
 
-require("dotenv").config({ path: path.resolve(__dirname, '.env') })  
-
-const uri = `mongodb+srv://${process.env.MONGO_DB_USERNAME}:${process.env.MONGO_DB_PASSWORD}@cluster0.smmpxbp.mongodb.net/?retryWrites=true&w=majority`
-const { MongoClient, ServerApiVersion } = require('mongodb');
-
-const articlesDatabaseAndCollection = {db: process.env.MONGO_DB_NAME, collection: process.env.MONGO_ARTICLE_COLLECTION};
-const client = new MongoClient(uri, { serverApi: ServerApiVersion.v1 });
-
-//=======================================================
+//==================================================
 
 //Get an article from the database by it's ID - returns the article as a JSON object, or "null" if not found.
 async function getArticleByID(id) {
-    // Connect to the MongoDB database
-    await client.connect();
 
     // Access the articles collection
-    const collection = client.db(articlesDatabaseAndCollection.db).collection(articlesDatabaseAndCollection.collection);
+    const collection = MAIN.CLIENT.db(MAIN.articlesDatabaseAndCollection.db).collection(MAIN.articlesDatabaseAndCollection.collection);
 
     // Query the database to get the article
     const article = await collection.findOne({ _id: id });
-
-    // Disconnect from the MongoDB database
-    await client.close();
 
     return article;
 }
@@ -31,11 +19,8 @@ async function getArticleByID(id) {
 async function getArticles() {
     var allArticles = "";
 
-    // Connect to the MongoDB database
-    await client.connect();
-
     // Access the articles collection
-    const collection = client.db(articlesDatabaseAndCollection.db).collection(articlesDatabaseAndCollection.collection);
+    const collection = MAIN.CLIENT.db(MAIN.articlesDatabaseAndCollection.db).collection(MAIN.articlesDatabaseAndCollection.collection);
 
     // Query the database to get all articles
     const articles = await collection.find().toArray();
@@ -45,9 +30,6 @@ async function getArticles() {
         const postBlock = createPostBlock(article._id, article.title, article.subtitle);
         allArticles += postBlock;
     });
-
-    // Disconnect from the MongoDB database
-    await client.close();
 
     return allArticles;
 }

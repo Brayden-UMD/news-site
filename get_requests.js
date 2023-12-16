@@ -5,18 +5,7 @@ const UTILS = require('./utilities.js');
 //Imports
 const express = require('express');
 const path = require('path');
-
-// Added
 const bodyParser = require("body-parser");
-
-require("dotenv").config({ path: path.resolve(__dirname, '.env') })  
-
-const uri = `mongodb+srv://${process.env.MONGO_DB_USERNAME}:${process.env.MONGO_DB_PASSWORD}@cluster0.smmpxbp.mongodb.net/?retryWrites=true&w=majority`
-const { MongoClient, ServerApiVersion } = require('mongodb');
-
- /* Our database and collection */
-const feedbackDatabaseAndCollection = {db: process.env.MONGO_DB_NAME, collection: process.env.MONGO_FEEDBACK_COLLECTION};
-const client = new MongoClient(uri, { serverApi: ServerApiVersion.v1 });
 
 /*===========================================
             GET Route Handlers
@@ -71,12 +60,9 @@ function initializeGETHandlers() {
     MAIN.APP.get("/displayReview", async (request, response) => {
         let reviewTable = '';
     
-        try {
-            await client.connect();
-    
-            let filter = {};
-            const cursor = client.db(feedbackDatabaseAndCollection.db)
-            .collection(feedbackDatabaseAndCollection.collection)
+        try {let filter = {};
+            const cursor = MAIN.CLIENT.db(MAIN.feedbackDatabaseAndCollection.db)
+            .collection(MAIN.feedbackDatabaseAndCollection.collection)
             .find(filter);
     
             const result = await cursor.toArray();
@@ -99,11 +85,11 @@ function initializeGETHandlers() {
             }      
         } catch (e) {
             console.error(e);
-        } finally {
-            await client.close();
         }
     });
+}
 
+function initialize404Handler() {
     // Since this is the last route we assume 404, as nothing else responded.
     MAIN.APP.use( function(request, response) {
         response.status(404);
@@ -119,4 +105,4 @@ function initializeGETHandlers() {
     });
 }
 
-module.exports = { initializeGETHandlers };
+module.exports = { initializeGETHandlers, initialize404Handler };
