@@ -10,7 +10,7 @@ App Description - One or two line description.
 
 API links - Links to API(s) you are using.
     + Monetag API - https://www.monetag.com
-    + PropellerAds - https://eu.dspmega.com/api/documentation#/bid/bidRequest
+        -> These are advertising APIs that we are using to generate revenue for our news website! We decided to use Monetag instead of Google Adsense because google requires a lengthly approval process.
 
 YouTube Demo Video - Link to a YouTube video that provides a demo of your application. This video is very important. We will not grade a project unless a video is provided.
     + TODO: Add video
